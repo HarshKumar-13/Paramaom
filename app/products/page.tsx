@@ -1,79 +1,71 @@
-import { gql } from "@apollo/client";
-import { client } from "@/lib/apollo";
 import Navbar from "@/components/Navbar";
-import ProductCard from "@/components/ProductCard";
-import HeroBanner from "@/components/HeroBanner";
+import Footer from "@/components/Footer";
+import Link from "next/link";
 
-const GET_MAIN_CATEGORIES = gql`
-  query GetMainCategories {
-    mainCategories {
-      nodes {
-        name
-        slug
-        categoryImage {
-          mainCategoryDetails {
-            node {
-              sourceUrl
-              altText
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+const demoProducts = [
+  {
+    id: 1,
+    title: "Food Raw Materials",
+    image:
+      "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+    slug: "food-raw-materials",
+  },
+  {
+    id: 2,
+    title: "Pipes and Fittings",
+    image:
+      "https://images.pexels.com/photos/2760243/pexels-photo-2760243.jpeg",
+    slug: "pipes-and-fittings",
+  },
+  {
+    id: 3,
+    title: "Plastic Sheets",
+    image:
+      "https://images.pexels.com/photos/4491881/pexels-photo-4491881.jpeg",
+    slug: "plastic-sheets",
+  },
+];
 
-type Category = {
-  name: string;
-  slug: string;
-  categoryImage?: {
-    mainCategoryDetails?: {
-      node?: {
-        sourceUrl?: string;
-        altText?: string;
-      };
-    };
-  };
-};
-
-type Response = {
-  mainCategories: {
-    nodes: Category[];
-  };
-};
-
-export default async function ProductsPage() {
-  const { data } = await client.query<Response>({
-    query: GET_MAIN_CATEGORIES,
-    fetchPolicy: "no-cache",
-  });
-
-  const categories = data?.mainCategories?.nodes || [];
-
+export default function ProductsPage() {
   return (
-    <main className="bg-[#f4f4f2] min-h-screen">
+    <main className="min-h-screen bg-[#F7F7F2]">
       <Navbar />
 
-      <HeroBanner
-        title="Products"
-        image="https://images.unsplash.com/photo-1501004318641-b39e6451bec6"
-      />
+      <section className="px-6 md:px-10 py-20">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-4 text-sm tracking-[0.4em] text-[#23225A]/60 uppercase">
+            // Products
+          </p>
 
-      <section className="max-w-[1600px] mx-auto px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {categories.map((category) => (
-            <ProductCard
-              key={category.slug}
-              title={category.name}
-              href={`/products/category/${category.slug}`}
-              image={
-                category.categoryImage?.mainCategoryDetails?.node
-                  ?.sourceUrl || "/placeholder.jpg"
-              }
-            />
-          ))}
+          <h1 className="mb-14 text-[52px] leading-[1.05] font-medium tracking-[0.4px] text-[#23225A]">
+            Our Products
+          </h1>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            {demoProducts.map((product) => (
+              <Link
+                key={product.id}
+                href={`/products/${product.slug}`}
+                className="group"
+              >
+                <div className="overflow-hidden rounded-[24px]">
+                  <img
+                    src={product.image}
+                    alt={product.title}
+                    className="h-[320px] w-full object-cover transition duration-500 group-hover:scale-105"
+                  />
+                </div>
+
+                <h3 className="mt-4 text-xl font-medium text-[#23225A]">
+                  {product.title}
+                </h3>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }
